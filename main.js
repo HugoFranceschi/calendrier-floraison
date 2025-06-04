@@ -1,32 +1,51 @@
-const btn = document.getElementById("btn");
+const form = document.getElementById("form");
+const start = document.getElementById("start");
+let parent = document.getElementById("parent");
+const main = document.querySelector("main");
 
-async function reponse() {
-	const resulte = await fetch("http://10.69.0.17:3002/v1/flowers", {
-		method: "GET",
-	});
+async function reponse(resultat) {
+	const resulte = await fetch(
+		"http://10.69.0.17:3002/v1/flowers?date=" + resultat,
+		{
+			method: "GET",
+		}
+	);
 	const flowers = await resulte.json();
 	console.log(flowers);
 
+	parent.remove();
+
+	parent = document.createElement("div");
+	parent.setAttribute("id", "parent");
+	parent.classList.add("parent");
+
+	main.appendChild(parent);
+
 	for (let flower of flowers) {
-		page(
+		const carte = page(
 			flower.image,
 			flower.name,
 			flower.description,
 			flower.propolis,
 			flower.nectar,
 			flower.propolis,
-			flower.melliferous
+			flower.melliferous,
+			flower.startBloom,
+			flower.endBloom
 		);
+
+		parent.appendChild(carte);
 	}
 }
 
-btn.addEventListener("click", () => {
-	reponse();
+form.addEventListener("submit", async (e) => {
+	e.preventDefault();
+
+	const resultat = start.value;
+	await reponse(resultat);
 });
 
-const main = document.querySelector("main");
-
-function page(a, b, c, p, n, poll, e) {
+function page(a, b, c, p, n, poll, e, s, end) {
 	const div = document.createElement("div");
 	div.classList.add("radius");
 
@@ -37,7 +56,13 @@ function page(a, b, c, p, n, poll, e) {
 	espace.classList.add("padinge");
 
 	const etoile = document.createElement("div");
-	etoile.classList.add("etoile");
+	if (e == 1) {
+		etoile.classList.add("rouge");
+	} else if (e == 2) {
+		etoile.classList.add("bleu");
+	} else if (e == 3) {
+		etoile.classList.add("vert");
+	}
 	for (let i = 0; i < e; i++) {
 		const imgEtoile = document.createElement("img");
 		imgEtoile.src = "/asset/Vector (3).svg";
@@ -59,16 +84,69 @@ function page(a, b, c, p, n, poll, e) {
 
 	const span = document.createElement("span");
 	span.classList.add("clair");
+	span.textContent = " Floraison";
 
 	const date = document.createElement("p");
 	date.classList.add("noir");
+
+	if (s == 1) {
+		date.textContent = "janvier-";
+	} else if (s == 2) {
+		date.textContent = "février-";
+	} else if (s == 3) {
+		date.textContent = "mars-";
+	} else if (s == 4) {
+		date.textContent = "avril-";
+	} else if (s == 5) {
+		date.textContent = "mai-";
+	} else if (s == 6) {
+		date.textContent = "juin-";
+	} else if (s == 7) {
+		date.textContent = "juillet-";
+	} else if (s == 8) {
+		date.textContent = "août-";
+	} else if (s == 9) {
+		date.textContent = "septembre-";
+	} else if (s == 10) {
+		date.textContent = "octobre-";
+	} else if (s == 11) {
+		date.textContent = "novembre-";
+	} else if (s == 12) {
+		date.textContent = "décembre-";
+	}
+
+	if (end == 1) {
+		date.textContent = date.textContent + "janvier";
+	} else if (end == 2) {
+		date.textContent = date.textContent + "février";
+	} else if (end == 3) {
+		date.textContent = date.textContent + "mars";
+	} else if (end == 4) {
+		date.textContent = date.textContent + "avril";
+	} else if (end == 5) {
+		date.textContent = date.textContent + "mai";
+	} else if (end == 6) {
+		date.textContent = date.textContent + "juin";
+	} else if (end == 7) {
+		date.textContent = date.textContent + "juillet";
+	} else if (end == 8) {
+		date.textContent = date.textContent + "août";
+	} else if (end == 9) {
+		date.textContent = date.textContent + "septembre";
+	} else if (end == 10) {
+		date.textContent = date.textContent + "octobre";
+	} else if (end == 11) {
+		date.textContent = date.textContent + "novembre";
+	} else if (end == 12) {
+		date.textContent = date.textContent + "décembre";
+	}
 
 	const descrip = document.createElement("p");
 	descrip.classList.add("gris-lint");
 	descrip.textContent = c;
 
 	const caliter = document.createElement("div");
-	caliter.classList.add("aligne");
+	caliter.classList.add("grid");
 	caliter.classList.add("gap");
 
 	const propolis = document.createElement("div");
@@ -155,11 +233,9 @@ function page(a, b, c, p, n, poll, e) {
 		petitDiv.appendChild(barre);
 	}
 
-	main.appendChild(div);
 	div.appendChild(img);
 	div.appendChild(espace);
 	espace.appendChild(etoile);
-	// etoile.appendChild(imgEtoile);
 	espace.appendChild(nom);
 	espace.appendChild(info);
 	info.appendChild(type);
@@ -168,4 +244,6 @@ function page(a, b, c, p, n, poll, e) {
 	info.appendChild(date);
 	espace.appendChild(descrip);
 	espace.appendChild(caliter);
+
+	return div;
 }
